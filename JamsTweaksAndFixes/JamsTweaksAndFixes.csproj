@@ -61,8 +61,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BetterApartmentFix.cs" />
+    <Compile Include="CopCarHitFix.cs" />
+    <Compile Include="Helpers.cs" />
     <Compile Include="JamsTweaksAndFixes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PumpUnlockCheat.cs" />
     <Compile Include="SofaFix.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

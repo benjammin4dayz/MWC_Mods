@@ -8,7 +8,7 @@ public class JamsTweaksAndFixes : Mod
     public override string ID => "JamsTweaksAndFixes";
     public override string Name => "Jam's Tweaks & Fixes";
     public override string Author => "benjammin4dayz";
-    public override string Version => "0.1.0";
+    public override string Version => "0.2.0";
     public override string Description => "Assorted tweaks and fixes.";
     public override Game SupportedGames => Game.MyWinterCar;
 
@@ -22,27 +22,41 @@ public class JamsTweaksAndFixes : Mod
     internal static void Log(string msg) => ModConsole.Log($"<b>[JamsTweaksAndFixes]</b> {msg}");
 
     private bool _isReloadWarned;
+
     private SettingsCheckBox _sofaFix;
+    private SettingsCheckBox _copCarHitFix;
     private SettingsCheckBox _betterApartmentFix;
+
+    private SettingsCheckBox _pumpUnlockCheat;
 
     private void Mod_Settings()
     {
         _ = Settings.AddHeader("Vanilla Fixes");
         _sofaFix = SofaFix.AddSetting(WarnReloadOnce);
+        _copCarHitFix = CopCarHitFix.AddSetting(WarnReloadOnce);
 
         _ = Settings.AddHeader("Mod Fixes");
         _betterApartmentFix = BetterApartmentFix.AddSetting(WarnReloadOnce);
+
+        _ = Settings.AddHeader("Cheats", true);
+        _pumpUnlockCheat = PumpUnlockCheat.AddSetting(WarnReloadOnce);
     }
     private void Mod_SettingsLoaded()
     {
         LoadSavedSetting(_sofaFix);
         LoadSavedSetting(_betterApartmentFix);
+
+        LoadSavedSetting(_pumpUnlockCheat);
     }
 
     private void Mod_OnLoad()
     {
         TryApply(_sofaFix, SofaFix.Apply);
+        TryApply(_copCarHitFix, CopCarHitFix.Apply);
+
         TryApply(_betterApartmentFix, BetterApartmentFix.Apply);
+
+        TryApply(_pumpUnlockCheat, PumpUnlockCheat.Apply);
     }
 
     private void TryApply(SettingsCheckBox checkbox, Action Apply)
