@@ -56,6 +56,9 @@
     <Compile Include="Horn.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="CarHornsUnity\AssetBundles\horns.unity3d" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <MSCMODSFOLDER>NONE</MSCMODSFOLDER>

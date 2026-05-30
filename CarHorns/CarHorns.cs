@@ -1,16 +1,18 @@
 using HutongGames.PlayMaker;
 using MSCLoader;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CarHorns;
 
 public class CarHorns : Mod
 {
+    public static SettingsKeybind Horn { get; private set; }
     public override string ID => "CarHorns";
     public override string Name => "Car Horns";
     public override string Author => "benjammin4dayz";
-    public override string Version => "1.0.0";
+    public override string Version => "1.1.0";
     public override string Description => "Adds a horn button to the Corris, Sorbet, and Taxi.";
     public override Game SupportedGames => Game.MyWinterCar;
 
@@ -18,13 +20,34 @@ public class CarHorns : Mod
     {
         SetupFunction(Setup.OnLoad, Mod_OnLoad);
         SetupFunction(Setup.Update, Mod_Update);
+        SetupFunction(Setup.ModSettings, Mod_Settings);
     }
 
     private FsmBool _corrisWheelInstalled;
     private Horn _corrisHorn;
+    private readonly string[] _hornNames = ["Standard", "Dixie"];
+    private readonly List<AudioClip> _horns = [null];
+    private SettingsDropDownList _corrisHornType;
+    private SettingsDropDownList _sorbetHornType;
+    private SettingsDropDownList _taxiHornType;
+
+    private void Mod_Settings()
+    {
+        Horn = Keybind.Add("horn", "Horn", KeyCode.T);
+
+        _ = Settings.AddHeader("Horn Type");
+        _corrisHornType = Settings.AddDropDownList("horn_type_corris", "Corris", _hornNames, 0);
+        _sorbetHornType = Settings.AddDropDownList("horn_type_sorbet", "Sorbet", _hornNames, 0);
+        _taxiHornType = Settings.AddDropDownList("horn_type_taxi", "Taxi", _hornNames, 0);
+        _ = Settings.AddText("<b><color=red>Changes will only take effect in the main menu</color></b>");
+    }
 
     private void Mod_OnLoad()
     {
+        var ab = LoadAssets.LoadBundle("CarHorns.CarHornsUnity.AssetBundles.horns.unity3d");
+        _horns.Add(ab.LoadAsset<AudioClip>("dixie"));
+        ab.Unload(false);
+
         try
         {
             var corris = GameObject.Find("CORRIS")
@@ -38,6 +61,12 @@ public class CarHorns : Mod
             var corrisHornAudio = corris.Find("Simulation/CarHorn")
                 ?.gameObject
                 ?? throw new Exception("Missing Corris horn");
+
+            var customHorn = _horns[_corrisHornType.GetSelectedItemIndex()];
+            if (customHorn != null)
+            {
+                corrisHornAudio.GetComponent<AudioSource>().clip = customHorn;
+            }
 
             _corrisHorn = AddHornButton(corrisWheel, corrisHornAudio);
         }
@@ -57,6 +86,12 @@ public class CarHorns : Mod
                 ?.gameObject
                 ?? throw new Exception("Missing Sorbet horn");
 
+            var customHorn = _horns[_sorbetHornType.GetSelectedItemIndex()];
+            if (customHorn != null)
+            {
+                sorbetHornAudio.GetComponent<AudioSource>().clip = customHorn;
+            }
+
             _ = AddHornButton(sorbetWheel, sorbetHornAudio);
         }
         catch (Exception ex)
@@ -72,6 +107,12 @@ public class CarHorns : Mod
                 ?? throw new Exception("Missing taxi steering wheel");
             var taxiHornAudio = taxi.Find("Simulation/CarHorn")?.gameObject
                 ?? throw new Exception("Missing taxi horn");
+
+            var customHorn = _horns[_taxiHornType.GetSelectedItemIndex()];
+            if (customHorn != null)
+            {
+                taxiHornAudio.GetComponent<AudioSource>().clip = customHorn;
+            }
 
             _ = AddHornButton(taxiWheel, taxiHornAudio);
         }

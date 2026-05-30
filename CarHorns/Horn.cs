@@ -1,4 +1,4 @@
-﻿using HutongGames.PlayMaker;
+using HutongGames.PlayMaker;
 using MSCLoader;
 using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
@@ -7,8 +7,10 @@ namespace CarHorns;
 
 internal class Horn : MonoBehaviour
 {
+    private GameObject _player;
     private FsmBool _guiUse;
     private bool _isInteractionVisible;
+    private bool _isClickInteraction;
 
     public GameObject audio;
     public Collider trigger;
@@ -22,6 +24,7 @@ internal class Horn : MonoBehaviour
     [SuppressMessage("Called by Unity", "IDE0051")]
     private void Awake()
     {
+        _player = GameObject.Find("PLAYER");
         _guiUse = FsmVariables.GlobalVariables.GetFsmBool("GUIuse");
     }
 
@@ -33,19 +36,30 @@ internal class Horn : MonoBehaviour
         if (hit)
         {
             SetInteractionVisible(true);
-
-            if (!audio.activeSelf && Input.GetMouseButtonDown(0))
-            {
-                audio.SetActive(true);
-            }
         }
-        else if (!hit && _isInteractionVisible)
+        else if (_isInteractionVisible)
         {
             SetInteractionVisible(false);
         }
 
-        if (audio.activeSelf && Input.GetMouseButtonUp(0))
+        if (CarHorns.Horn.GetKeybindDown() && _player.transform.root == transform.root)
         {
+            audio.SetActive(true);
+        }
+        if (CarHorns.Horn.GetKeybindUp())
+        {
+            audio.SetActive(false);
+        }
+
+
+        if (hit && Input.GetMouseButtonDown(0))
+        {
+            _isClickInteraction = true;
+            audio.SetActive(true);
+        }
+        if (_isClickInteraction && Input.GetMouseButtonUp(0))
+        {
+            _isClickInteraction = false;
             audio.SetActive(false);
         }
     }

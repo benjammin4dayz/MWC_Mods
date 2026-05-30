@@ -1,0 +1,9 @@
+v1.1.0
+
+- Added keybind to activate horn (default: T)
+- Added mod settings to customize horns per-vehicle
+- Added Dixie Horn
+
+v1.0.0
+
+- Initial release
